@@ -3,43 +3,115 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Familienmitglied eintragen</title>
+  <title>Formular zur Familieneingabe</title>
+  <style>
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-  <h2>Neue Person eintragen</h2>
-  <form id="personForm">
-    <!-- Pflichtfelder -->
-    <label>Name*: <input type="text" name="name" required></label><br><br>
-    <label>Geburtsjahr*: <input type="number" name="birthYear" required></label><br><br>
+  <h2 id="headline">Sprache wählen / Choose language / Choisir la langue</h2>
+  <select id="languageSelect">
+    <option value="de">Deutsch</option>
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+  </select>
 
-    <!-- Optionale Felder -->
-    <label>Geschlecht: <input type="text" name="gender"></label><br><br>
-    <label>Beruf: <input type="text" name="job"></label><br><br>
-    <label>Wohnort: <input type="text" name="location"></label><br><br>
-    <label>Staatsangehörigkeit: <input type="text" name="nationality"></label><br><br>
-    <label>Hobbys: <input type="text" name="hobbies"></label><br><br>
-    <label>E-Mail: <input type="email" name="email"></label><br><br>
-    <label>Telefonnummer: <input type="text" name="phone"></label><br><br>
-    <label>Profilbild-URL: <input type="url" name="avatar"></label><br><br>
-    <label>Elternnamen: <input type="text" name="parents"></label><br><br>
-    <label>Beziehungstyp (z.B. Onkel): <input type="text" name="relation"></label><br><br>
+  <div id="formWrapper" class="hidden">
+    <h3 id="formTitle">Neue Person eintragen</h3>
+    <form id="personForm">
+      <label><span data-i18n="name">Name*</span>: <input type="text" name="name" required></label><br><br>
+      <label><span data-i18n="birthYear">Geburtsjahr*</span>: <input type="number" name="birthYear" required></label><br><br>
+      <label><span data-i18n="gender">Geschlecht</span>: <input type="text" name="gender"></label><br><br>
+      <label><span data-i18n="job">Beruf</span>: <input type="text" name="job"></label><br><br>
+      <label><span data-i18n="location">Wohnort</span>: <input type="text" name="location"></label><br><br>
+      <label><span data-i18n="nationality">Staatsangehörigkeit</span>: <input type="text" name="nationality"></label><br><br>
+      <label><span data-i18n="hobbies">Hobbys</span>: <input type="text" name="hobbies"></label><br><br>
+      <label><span data-i18n="email">E-Mail</span>: <input type="email" name="email"></label><br><br>
+      <label><span data-i18n="phone">Telefonnummer</span>: <input type="text" name="phone"></label><br><br>
+      <label><span data-i18n="avatar">Profilbild-URL</span>: <input type="url" name="avatar"></label><br><br>
+      <label><span data-i18n="parents">Elternnamen</span>: <input type="text" name="parents"></label><br><br>
+      <label><span data-i18n="relation">Beziehungstyp</span>: <input type="text" name="relation"></label><br><br>
 
-    <!-- ID optional - automatisch generiert -->
-    <input type="hidden" name="id" id="id">
-
-    <button type="submit">Absenden</button>
-  </form>
-
-  <p id="meldung"></p>
+      <input type="hidden" name="id" id="id">
+      <button type="submit" id="submitBtn">Absenden</button>
+    </form>
+    <p id="meldung"></p>
+  </div>
 
   <script>
-    const form = document.getElementById("personForm");
+    const translations = {
+      de: {
+        title: "Neue Person eintragen",
+        name: "Name*",
+        birthYear: "Geburtsjahr*",
+        gender: "Geschlecht",
+        job: "Beruf",
+        location: "Wohnort",
+        nationality: "Staatsangehörigkeit",
+        hobbies: "Hobbys",
+        email: "E-Mail",
+        phone: "Telefonnummer",
+        avatar: "Profilbild-URL",
+        parents: "Elternnamen",
+        relation: "Beziehungstyp",
+        submit: "Absenden"
+      },
+      en: {
+        title: "Enter New Person",
+        name: "Name*",
+        birthYear: "Year of Birth*",
+        gender: "Gender",
+        job: "Occupation",
+        location: "City/Location",
+        nationality: "Nationality",
+        hobbies: "Hobbies",
+        email: "Email",
+        phone: "Phone number",
+        avatar: "Avatar URL",
+        parents: "Parents",
+        relation: "Relation type",
+        submit: "Submit"
+      },
+      fr: {
+        title: "Ajouter une nouvelle personne",
+        name: "Nom*",
+        birthYear: "Année de naissance*",
+        gender: "Sexe",
+        job: "Profession",
+        location: "Ville",
+        nationality: "Nationalité",
+        hobbies: "Loisirs",
+        email: "E-mail",
+        phone: "Téléphone",
+        avatar: "URL de la photo",
+        parents: "Parents",
+        relation: "Relation",
+        submit: "Envoyer"
+      }
+    };
+
+    const langSelect = document.getElementById("languageSelect");
+    const formWrapper = document.getElementById("formWrapper");
+    const idInput = document.getElementById("id");
     const meldung = document.getElementById("meldung");
-    form.id.value = Date.now(); // ID automatisch setzen
+
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      const labels = document.querySelectorAll("[data-i18n]");
+      labels.forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        el.innerText = translations[lang][key];
+      });
+      document.getElementById("formTitle").innerText = translations[lang].title;
+      document.getElementById("submitBtn").innerText = translations[lang].submit;
+      formWrapper.classList.remove("hidden");
+    });
+
+    const form = document.getElementById("personForm");
+    idInput.value = Date.now();
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const formData = new FormData(form);
       const data = {};
       formData.forEach((value, key) => {
@@ -52,19 +124,14 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
-
         const result = await res.json();
-        if (res.ok) {
-          meldung.innerText = "✅ Erfolgreich gespeichert!";
-        } else {
-          meldung.innerText = "⚠️ Fehler: " + (result.error || res.statusText);
-        }
+        meldung.innerText = res.ok ? "✅ Erfolgreich gespeichert!" : "⚠️ Fehler: " + (result.error || res.statusText);
       } catch (err) {
         meldung.innerText = "❌ Verbindungsfehler.";
       }
 
       form.reset();
-      form.id.value = Date.now();
+      idInput.value = Date.now();
     });
   </script>
 </body>
