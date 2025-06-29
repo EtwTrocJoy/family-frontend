@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Familienmitglied eintragen</title>
+</head>
+<body>
+  <h2>Neue Person eintragen</h2>
+  <form id="personForm">
+    <!-- Pflichtfelder -->
+    <label>Name*: <input type="text" name="name" required></label><br><br>
+    <label>Geburtsjahr*: <input type="number" name="birthYear" required></label><br><br>
+
+    <!-- Optionale Felder -->
+    <label>Geschlecht: <input type="text" name="gender"></label><br><br>
+    <label>Beruf: <input type="text" name="job"></label><br><br>
+    <label>Wohnort: <input type="text" name="location"></label><br><br>
+    <label>Staatsangehörigkeit: <input type="text" name="nationality"></label><br><br>
+    <label>Hobbys: <input type="text" name="hobbies"></label><br><br>
+    <label>E-Mail: <input type="email" name="email"></label><br><br>
+    <label>Telefonnummer: <input type="text" name="phone"></label><br><br>
+    <label>Profilbild-URL: <input type="url" name="avatar"></label><br><br>
+    <label>Elternnamen: <input type="text" name="parents"></label><br><br>
+    <label>Beziehungstyp (z.B. Onkel): <input type="text" name="relation"></label><br><br>
+
+    <!-- ID optional - automatisch generiert -->
+    <input type="hidden" name="id" id="id">
+
+    <button type="submit">Absenden</button>
+  </form>
+
+  <p id="meldung"></p>
+
+  <script>
+    const form = document.getElementById("personForm");
+    const meldung = document.getElementById("meldung");
+    form.id.value = Date.now(); // ID automatisch setzen
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        if (value !== "") data[key] = value;
+      });
+
+      try {
+        const res = await fetch("https://family-backend-1fat.onrender.com/api/persons", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          meldung.innerText = "✅ Erfolgreich gespeichert!";
+        } else {
+          meldung.innerText = "⚠️ Fehler: " + (result.error || res.statusText);
+        }
+      } catch (err) {
+        meldung.innerText = "❌ Verbindungsfehler.";
+      }
+
+      form.reset();
+      form.id.value = Date.now();
+    });
+  </script>
+</body>
+</html>
