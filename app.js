@@ -1,3 +1,5 @@
+// === Block 0: Basis-URL für das Backend (z. B. Render) ===
+const API_BASE = "https://family-backend-1fat.onrender.com";
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -55,7 +57,7 @@ function showPage(sectionId) {
 }
 // === Block 3: Gruppen aus Backend laden ===
 async function loadGroups() {
-  const res = await fetch("/api/groups");
+  const res = await fetch(`${API_BASE}/api/groups`);
   const groups = await res.json();
   const groupSelect = document.getElementById("groupSelect");
   groupSelect.innerHTML = "";
@@ -75,7 +77,7 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
   // Dummy-Person erzeugen
   const id = Math.floor(Math.random() * 10000);
   const birthYear = 1990;
-  const resPerson = await fetch("/api/persons", {
+  const resPerson = await fetch(`${API_BASE}/api/persons`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id, name, birthYear })
@@ -86,7 +88,7 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
   }
 
   // Beitrittsanfrage stellen
-  const resJoin = await fetch(`/api/groups/${groupId}/join`, {
+  const resJoin = await fetch(`${API_BASE}/api/groups/${groupId}/join`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ personId: id })
@@ -98,7 +100,7 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
 });
 // === Block 5: Profile aus API anzeigen ===
 async function loadProfiles() {
-  const res = await fetch("/api/persons");
+  const res = await fetch(`${API_BASE}/api/groups`);
   const data = await res.json();
   const list = document.getElementById("profileList");
   list.innerHTML = "";
@@ -127,7 +129,7 @@ document.getElementById("editProfileForm").addEventListener("submit", async e =>
   const name = e.target.name.value;
   const birthYear = e.target.birthYear.value;
 
-  const res = await fetch(`/api/persons/${id}`, {
+  const res = await fetch(`${API_BASE}/api/persons/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, birthYear })
@@ -141,7 +143,7 @@ document.getElementById("editProfileForm").addEventListener("submit", async e =>
 // === Block 6.3: Profil löschen ===
 async function deleteProfile() {
   const id = document.querySelector("#editProfileForm input[name='id']").value;
-  const res = await fetch(`/api/persons/${id}`, { method: "DELETE" });
+  const res = await fetch(`${API_BASE}/api/persons/${id}`, { method: "DELETE" });
   if (res.ok) {
     alert("✅ Profil gelöscht");
     loadProfiles();
@@ -159,7 +161,7 @@ function applyFilters() {
 }
 function exportProfiles() {
   const lines = ["ID,Name,Geburtsjahr"];
-  fetch("/api/persons")
+  fetch(`${API_BASE}/api/persons`)
     .then(res => res.json())
     .then(data => {
       data.forEach(p => lines.push(`${p.id},${p.name},${p.birthYear}`));
