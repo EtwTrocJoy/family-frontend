@@ -1,5 +1,6 @@
 // === Block 0: Basis-URL für das Backend (z. B. Render) ===
-const API_BASE = "https://github.com/EtwTrocJoy/family-Backend";
+// Update this URL when deploying to a different environment
+const API_BASE = "https://family-backend-1fat.onrender.com";
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
