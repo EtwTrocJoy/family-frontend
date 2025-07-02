@@ -59,18 +59,28 @@ function showPage(sectionId) {
   });
   document.getElementById(sectionId).style.display = "block";
 }
+
+function showMessage(msg) {
+  const el = document.getElementById("groupMessage");
+  if (el) el.textContent = msg;
+}
 // === Block 3: Gruppen aus Backend laden ===
 async function loadGroups() {
-  const res = await fetch(`${API_BASE}/api/groups`);
-  const groups = await res.json();
-  const groupSelect = document.getElementById("groupSelect");
-  groupSelect.innerHTML = "";
-  groups.forEach(g => {
-    const opt = document.createElement("option");
-    opt.value = g.id;
-    opt.textContent = g.name;
-    groupSelect.appendChild(opt);
-  });
+  try {
+    const res = await fetch(`${API_BASE}/api/groups`);
+    if (!res.ok) throw new Error();
+    const groups = await res.json();
+    const groupSelect = document.getElementById("groupSelect");
+    groupSelect.innerHTML = "";
+    groups.forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g.id;
+      opt.textContent = g.name;
+      groupSelect.appendChild(opt);
+    });
+  } catch (err) {
+    showMessage("❌ Gruppen konnten nicht geladen werden.");
+  }
 }
 // === Block 4: Beitrittsformular absenden ===
 document.getElementById("joinGroupForm").addEventListener("submit", async e => {
@@ -78,43 +88,52 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
   const name = e.target.name.value;
   const groupId = e.target.groupId.value;
 
-  // Dummy-Person erzeugen
-  const id = Math.floor(Math.random() * 10000);
-  const birthYear = 1990;
-  const resPerson = await fetch(`${API_BASE}/api/persons`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, name, birthYear })
-  });
-  if (!resPerson.ok) {
-    document.getElementById("groupMessage").textContent = "❌ Person existiert oder ungültig.";
-    return;
+  try {
+    // Dummy-Person erzeugen
+    const id = Math.floor(Math.random() * 10000);
+    const birthYear = 1990;
+    const resPerson = await fetch(`${API_BASE}/api/persons`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, birthYear })
+    });
+    if (!resPerson.ok) {
+      showMessage("❌ Person existiert oder ungültig.");
+      return;
+    }
+
+    // Beitrittsanfrage stellen
+    const resJoin = await fetch(`${API_BASE}/api/groups/${groupId}/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ personId: id })
+    });
+
+    showMessage(resJoin.ok
+      ? "✅ Beitrittsanfrage gesendet!"
+      : "❌ Beitritt fehlgeschlagen!");
+  } catch (err) {
+    showMessage("❌ Beitritt fehlgeschlagen!");
   }
-
-  // Beitrittsanfrage stellen
-  const resJoin = await fetch(`${API_BASE}/api/groups/${groupId}/join`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ personId: id })
-  });
-
-  document.getElementById("groupMessage").textContent = resJoin.ok
-    ? "✅ Beitrittsanfrage gesendet!"
-    : "❌ Beitritt fehlgeschlagen!";
 });
 // === Block 5: Profile aus API anzeigen ===
 async function loadProfiles() {
-  const res = await fetch(`${API_BASE}/api/persons`);
-  const data = await res.json();
-  const list = document.getElementById("profileList");
-  list.innerHTML = "";
-  data.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent = `${p.name} (${p.birthYear})`;
-    li.addEventListener("click", () => showProfile(p));
-    list.appendChild(li);
-  });
-  showPage("profileOverview");
+  try {
+    const res = await fetch(`${API_BASE}/api/persons`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const list = document.getElementById("profileList");
+    list.innerHTML = "";
+    data.forEach(p => {
+      const li = document.createElement("li");
+      li.textContent = `${p.name} (${p.birthYear})`;
+      li.addEventListener("click", () => showProfile(p));
+      list.appendChild(li);
+    });
+    showPage("profileOverview");
+  } catch (err) {
+    showMessage("❌ Profile konnten nicht geladen werden.");
+  }
 }
 // === Block 6.1: Einzelprofil anzeigen ===
 function showProfile(p) {
@@ -133,24 +152,36 @@ document.getElementById("editProfileForm").addEventListener("submit", async e =>
   const name = e.target.name.value;
   const birthYear = e.target.birthYear.value;
 
-  const res = await fetch(`${API_BASE}/api/persons/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, birthYear })
-  });
-  if (res.ok) {
-    alert("✅ Profil geändert");
-    loadProfiles();
+  try {
+    const res = await fetch(`${API_BASE}/api/persons/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, birthYear })
+    });
+    if (res.ok) {
+      alert("✅ Profil geändert");
+      loadProfiles();
+    } else {
+      showMessage("❌ Profil konnte nicht gespeichert werden.");
+    }
+  } catch (err) {
+    showMessage("❌ Profil konnte nicht gespeichert werden.");
   }
 });
 
 // === Block 6.3: Profil löschen ===
 async function deleteProfile() {
   const id = document.querySelector("#editProfileForm input[name='id']").value;
-  const res = await fetch(`${API_BASE}/api/persons/${id}`, { method: "DELETE" });
-  if (res.ok) {
-    alert("✅ Profil gelöscht");
-    loadProfiles();
+  try {
+    const res = await fetch(`${API_BASE}/api/persons/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      alert("✅ Profil gelöscht");
+      loadProfiles();
+    } else {
+      showMessage("❌ Profil konnte nicht gelöscht werden.");
+    }
+  } catch (err) {
+    showMessage("❌ Profil konnte nicht gelöscht werden.");
   }
 }
 // === Block 7: Filter & CSV Export ===
@@ -163,19 +194,22 @@ function applyFilters() {
     li.style.display = match ? "" : "none";
   });
 }
-function exportProfiles() {
+async function exportProfiles() {
   const lines = ["ID,Name,Geburtsjahr"];
-  fetch(`${API_BASE}/api/persons`)
-    .then(res => res.json())
-    .then(data => {
-      data.forEach(p => lines.push(`${p.id},${p.name},${p.birthYear}`));
-      const blob = new Blob([lines.join("\n")], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "profiles.csv";
-      a.click();
-    });
+  try {
+    const res = await fetch(`${API_BASE}/api/persons`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    data.forEach(p => lines.push(`${p.id},${p.name},${p.birthYear}`));
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "profiles.csv";
+    a.click();
+  } catch (err) {
+    showMessage("❌ Export fehlgeschlagen.");
+  }
 }
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
