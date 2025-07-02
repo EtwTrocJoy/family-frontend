@@ -101,7 +101,7 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
 });
 // === Block 5: Profile aus API anzeigen ===
 async function loadProfiles() {
-  const res = await fetch(`${API_BASE}/api/groups`);
+  const res = await fetch(`${API_BASE}/api/persons`);
   const data = await res.json();
   const list = document.getElementById("profileList");
   list.innerHTML = "";
