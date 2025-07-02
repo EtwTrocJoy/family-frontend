@@ -8,6 +8,7 @@ const translations = {
     join: "Gruppe beitreten oder erstellen",
     name: "Dein Name*:",
     group: "Gruppe wählen:",
+    languageLabel: "Sprache wählen:",
     joinBtn: "Beitreten",
     profileHeadline: "Alle Profile in deiner Gruppe",
     filter: "Filter anwenden",
@@ -19,6 +20,7 @@ const translations = {
     join: "Join or Create Group",
     name: "Your Name*:",
     group: "Select Group:",
+    languageLabel: "Select language:",
     joinBtn: "Join",
     profileHeadline: "All profiles in your group",
     filter: "Apply filter",
@@ -30,6 +32,7 @@ const translations = {
     join: "Rejoindre ou créer un groupe",
     name: "Ton nom*:",
     group: "Choisir un groupe:",
+    languageLabel: "Choisir la langue:",
     joinBtn: "Rejoindre",
     profileHeadline: "Tous les profils de votre groupe",
     filter: "Appliquer le filtre",
@@ -43,7 +46,7 @@ document.getElementById('languageSelect').addEventListener('change', e => {
   const t = translations[lang];
   document.getElementById('app-title').textContent = t.title;
   document.querySelector('h2').textContent = t.join;
-  document.querySelector('label[for="languageSelect"]').textContent = "🌐 " + t.group;
+  document.querySelector('label[for="languageSelect"]').textContent = "🌐 " + t.languageLabel;
   document.querySelector('label input[name="name"]').previousSibling.textContent = t.name;
   document.querySelector('button[type="submit"]').textContent = t.joinBtn;
   document.querySelector('#profileOverview h2').textContent = t.profileHeadline;
