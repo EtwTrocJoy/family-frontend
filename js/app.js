@@ -1,6 +1,7 @@
 // === Block 0: Basis-URL für das Backend (z. B. Render) ===
 // Update this URL when deploying to a different environment
 const API_BASE = "https://family-backend-1fat.onrender.com";
+let currentGroupId = null; // merken, in welcher Gruppe sich der Nutzer befindet
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -58,6 +59,16 @@ function showPage(sectionId) {
     sec.style.display = "none";
   });
   document.getElementById(sectionId).style.display = "block";
+  if (sectionId === "treeView") {
+    loadTree();
+  } else if (sectionId === "groupDashboard") {
+    loadMemberRequests();
+    loadMemberList();
+  } else if (sectionId === "settings") {
+    loadSettings();
+  } else if (sectionId === "profileOverview") {
+    loadProfiles();
+  }
 }
 
 function showMessage(msg) {
@@ -109,9 +120,13 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
       body: JSON.stringify({ personId: id })
     });
 
-    showMessage(resJoin.ok
-      ? "✅ Beitrittsanfrage gesendet!"
-      : "❌ Beitritt fehlgeschlagen!");
+    if (resJoin.ok) {
+      currentGroupId = groupId;
+      showMessage("✅ Beitrittsanfrage gesendet!");
+      loadProfiles();
+    } else {
+      showMessage("❌ Beitritt fehlgeschlagen!");
+    }
   } catch (err) {
     showMessage("❌ Beitritt fehlgeschlagen!");
   }
@@ -211,6 +226,129 @@ async function exportProfiles() {
     showMessage("❌ Export fehlgeschlagen.");
   }
 }
+
+// === Block 8.1: Stammbaum anzeigen ===
+async function loadTree() {
+  const container = document.getElementById("treeContainer");
+  const select = document.getElementById("treeSelect");
+  container.innerHTML = "";
+  select.innerHTML = "";
+
+  let persons = [];
+  if (window.genealogyData) {
+    // Use sample data when available
+    persons = window.genealogyData;
+  } else if (currentGroupId) {
+    try {
+      const res = await fetch(`${API_BASE}/api/persons`);
+      if (!res.ok) throw new Error();
+      persons = await res.json();
+    } catch (err) {
+      showMessage("❌ Stammbaum konnte nicht geladen werden.");
+      return;
+    }
+  }
+
+  persons.forEach(p => {
+    const div = document.createElement("div");
+    div.textContent = `${p.name} (${p.birthYear || ''})`;
+    container.appendChild(div);
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.name;
+    select.appendChild(opt);
+  });
+}
+
+document.getElementById("treeSelect").addEventListener("change", computeRelation);
+
+function computeRelation() {
+  const info = document.getElementById("relationInfo");
+  // Platzhalter-Logik – Backend-Berechnung folgt
+  info.textContent = "Verwandtschaftsberechnung folgt.";
+}
+
+// === Block 8.2: Gruppen-Dashboard ===
+async function loadMemberRequests() {
+  if (!currentGroupId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/groups/${currentGroupId}/requests`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const list = document.getElementById("memberRequests");
+    list.innerHTML = "";
+    data.forEach(r => {
+      const li = document.createElement("li");
+      li.textContent = r.name;
+      const okBtn = document.createElement("button");
+      okBtn.textContent = "✔️";
+      okBtn.addEventListener("click", () => handleRequest(r.id, true));
+      const noBtn = document.createElement("button");
+      noBtn.textContent = "❌";
+      noBtn.addEventListener("click", () => handleRequest(r.id, false));
+      li.appendChild(okBtn);
+      li.appendChild(noBtn);
+      list.appendChild(li);
+    });
+  } catch (err) {
+    showMessage("❌ Anfragen konnten nicht geladen werden.");
+  }
+}
+
+async function handleRequest(id, accept) {
+  const url = accept
+    ? `${API_BASE}/api/groups/${currentGroupId}/requests/${id}/accept`
+    : `${API_BASE}/api/groups/${currentGroupId}/requests/${id}/reject`;
+  await fetch(url, { method: "POST" });
+  loadMemberRequests();
+  loadMemberList();
+}
+
+async function loadMemberList() {
+  if (!currentGroupId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/groups/${currentGroupId}/members`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const list = document.getElementById("memberList");
+    list.innerHTML = "";
+    data.forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = m.name;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    showMessage("❌ Mitglieder konnten nicht geladen werden.");
+  }
+}
+
+// === Block 8.3: Einstellungen laden und speichern ===
+async function loadSettings() {
+  if (!currentGroupId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/groups/${currentGroupId}`);
+    if (!res.ok) throw new Error();
+    const g = await res.json();
+    document.getElementById("publicGroup").checked = !!g.public;
+    document.getElementById("onlyMembers").checked = !!g.onlyMembers;
+  } catch (err) {
+    showMessage("❌ Einstellungen konnten nicht geladen werden.");
+  }
+}
+
+async function saveSettings() {
+  if (!currentGroupId) return;
+  const publicGroup = document.getElementById("publicGroup").checked;
+  const onlyMembers = document.getElementById("onlyMembers").checked;
+  await fetch(`${API_BASE}/api/groups/${currentGroupId}/settings`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ public: publicGroup, onlyMembers })
+  });
+}
+
+document.getElementById("publicGroup").addEventListener("change", saveSettings);
+document.getElementById("onlyMembers").addEventListener("change", saveSettings);
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
   loadGroups();
