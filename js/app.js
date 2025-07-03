@@ -69,10 +69,8 @@ function showPage(sectionId) {
     loadMemberList();
   } else if (sectionId === "settings") {
     loadSettings();
-  } else if (sectionId === "profileOverview") {
-    if (currentGroupId || window.genealogyData) {
-      loadProfiles();
-    }
+ codex/update-loadprofiles-to-handle-fallback-data
+
   }
 }
 
@@ -138,27 +136,32 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
 });
 // === Block 5: Profile aus API anzeigen ===
 async function loadProfiles() {
+  const list = document.getElementById("profileList");
+  list.innerHTML = "";
+
+  let data = [];
   try {
-    let data;
+ codex/update-loadprofiles-to-handle-fallback-data
+    const res = await fetch(`${API_BASE}/api/persons`);
+    if (!res.ok) throw new Error();
+    data = await res.json();
+
+  } catch (err) {
     if (window.genealogyData) {
       data = window.genealogyData;
     } else {
-      const res = await fetch(`${API_BASE}/api/persons`);
-      if (!res.ok) throw new Error();
-      data = await res.json();
+      showMessage("❌ Profile konnten nicht geladen werden.");
+      return;
     }
-    const list = document.getElementById("profileList");
-    list.innerHTML = "";
-    data.forEach(p => {
-      const li = document.createElement("li");
-      li.textContent = `${p.name} (${p.birthYear || ""})`;
-      li.addEventListener("click", () => showProfile(p));
-      list.appendChild(li);
-    });
-    showPage("profileOverview");
-  } catch (err) {
-    showMessage("❌ Profile konnten nicht geladen werden.");
   }
+
+  data.forEach(p => {
+    const li = document.createElement("li");
+    li.textContent = `${p.name} (${p.birthYear || ''})`;
+    li.addEventListener("click", () => showProfile(p));
+    list.appendChild(li);
+  });
+  showPage("profileOverview");
 }
 // === Block 6.1: Einzelprofil anzeigen ===
 function showProfile(p) {
