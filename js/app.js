@@ -2,6 +2,7 @@
 // Update this URL when deploying to a different environment
 const API_BASE = "https://family-backend-1fat.onrender.com";
 let currentGroupId = null; // merken, in welcher Gruppe sich der Nutzer befindet
+let personMap = {}; // Sammel-Map aller Personen fuer schnellen Zugriff
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -262,9 +263,9 @@ async function loadTree() {
 
 
   // Map person id -> person object for quick lookup
-  const byId = {};
+  personMap = {};
   persons.forEach(p => {
-    byId[p.id] = p;
+    personMap[p.id] = p;
     const opt = document.createElement("option");
     opt.value = p.id;
     opt.textContent = p.name;
@@ -278,7 +279,7 @@ async function loadTree() {
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
       person.children.forEach(cid => {
-        const child = byId[cid];
+        const child = personMap[cid];
         if (child) ul.appendChild(buildNode(child));
       });
       li.appendChild(ul);
