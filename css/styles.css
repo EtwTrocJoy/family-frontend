@@ -197,7 +197,23 @@ section form input[type="url"] {
   padding-left: 20px;             /* Einrückung für Kinder */
 }
 #treeContainer li {
+  position: relative;             /* für die Verbindungslinie */
+  padding-left: 20px;             /* Platz für die Linie */
   margin: 4px 0;                  /* Abstand zwischen Einträgen */
+  border-left: 2px solid #aaa;    /* Vertikale Linie */
+}
+#treeContainer li::before {
+  content: "";                    /* horizontale Linie */
+  position: absolute;
+  top: 0;
+  left: -10px;
+  width: 10px;
+  height: 2px;
+  background: #aaa;
+}
+.selected {
+  background-color: #fffbcc;      /* Markierung */
+  font-weight: bold;
 }
 #treeContainer li.selected {
   background: #fffa8b;            /* Hellgelbe Hervorhebung */
