@@ -1,0 +1,9 @@
+{
+  "name": "family-frontend",
+  "version": "1.0.0",
+  "description": "Family platform frontend",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "license": "MIT"
+}
