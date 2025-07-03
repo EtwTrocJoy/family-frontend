@@ -42,8 +42,7 @@ const translations = {
   }
 };
 
-document.getElementById('languageSelect').addEventListener('change', e => {
-  const lang = e.target.value;
+function applyLanguage(lang) {
   const t = translations[lang];
   document.getElementById('app-title').textContent = t.title;
   document.querySelector('h2').textContent = t.join;
@@ -52,6 +51,10 @@ document.getElementById('languageSelect').addEventListener('change', e => {
   document.querySelector('button[type="submit"]').textContent = t.joinBtn;
   document.querySelector('#profileOverview h2').textContent = t.profileHeadline;
   document.querySelector('#profileTools h3').textContent = "🔎 " + t.filter + " & " + t.export;
+}
+
+document.getElementById('languageSelect').addEventListener('change', e => {
+  applyLanguage(e.target.value);
 });
 // === Block 2: Navigation zwischen den Bereichen ===
 function showPage(sectionId) {
@@ -66,6 +69,8 @@ function showPage(sectionId) {
     loadMemberList();
   } else if (sectionId === "settings") {
     loadSettings();
+ codex/update-loadprofiles-to-handle-fallback-data
+
   }
 }
 
@@ -136,9 +141,11 @@ async function loadProfiles() {
 
   let data = [];
   try {
+ codex/update-loadprofiles-to-handle-fallback-data
     const res = await fetch(`${API_BASE}/api/persons`);
     if (!res.ok) throw new Error();
     data = await res.json();
+
   } catch (err) {
     if (window.genealogyData) {
       data = window.genealogyData;
@@ -358,5 +365,8 @@ document.getElementById("onlyMembers").addEventListener("change", saveSettings);
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
   loadGroups();
+ codex/extract-languageselect-handler-to-applylanguage-function
   loadProfiles();
+  const select = document.getElementById("languageSelect");
+  if (select) applyLanguage(select.value);
 });
