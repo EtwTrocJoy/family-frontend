@@ -70,7 +70,9 @@ function showPage(sectionId) {
   } else if (sectionId === "settings") {
     loadSettings();
   } else if (sectionId === "profileOverview") {
-    loadProfiles();
+    if (currentGroupId || window.genealogyData) {
+      loadProfiles();
+    }
   }
 }
 
@@ -137,14 +139,19 @@ document.getElementById("joinGroupForm").addEventListener("submit", async e => {
 // === Block 5: Profile aus API anzeigen ===
 async function loadProfiles() {
   try {
-    const res = await fetch(`${API_BASE}/api/persons`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    let data;
+    if (window.genealogyData) {
+      data = window.genealogyData;
+    } else {
+      const res = await fetch(`${API_BASE}/api/persons`);
+      if (!res.ok) throw new Error();
+      data = await res.json();
+    }
     const list = document.getElementById("profileList");
     list.innerHTML = "";
     data.forEach(p => {
       const li = document.createElement("li");
-      li.textContent = `${p.name} (${p.birthYear})`;
+      li.textContent = `${p.name} (${p.birthYear || ""})`;
       li.addEventListener("click", () => showProfile(p));
       list.appendChild(li);
     });
@@ -355,6 +362,7 @@ document.getElementById("onlyMembers").addEventListener("change", saveSettings);
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
   loadGroups();
+ codex/extract-languageselect-handler-to-applylanguage-function
   loadProfiles();
   const select = document.getElementById("languageSelect");
   if (select) applyLanguage(select.value);
