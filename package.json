@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Family platform frontend",
   "scripts": {
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "node js/tests/relationshipTest.js"
   },
   "license": "MIT"
 }

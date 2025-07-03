@@ -2,8 +2,10 @@
 // Update this URL when deploying to a different environment
 const API_BASE = "https://family-backend-1fat.onrender.com";
 let currentGroupId = null; // merken, in welcher Gruppe sich der Nutzer befindet
+
 // Globale Map von Personen-IDs auf Person-Objekte für schnelle Lookup
 let personMap = {};
+
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -264,9 +266,9 @@ async function loadTree() {
 
 
   // Map person id -> person object for quick lookup
-  const byId = {};
+  personMap = {};
   persons.forEach(p => {
-    byId[p.id] = p;
+    personMap[p.id] = p;
     const opt = document.createElement("option");
     opt.value = p.id;
     opt.textContent = p.name;
@@ -278,11 +280,12 @@ async function loadTree() {
   // Helper: build nested list items recursively
   function buildNode(person) {
     const li = document.createElement("li");
+    li.dataset.id = person.id;
     li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
       person.children.forEach(cid => {
-        const child = byId[cid];
+        const child = personMap[cid];
         if (child) ul.appendChild(buildNode(child));
       });
       li.appendChild(ul);
@@ -300,6 +303,7 @@ document.getElementById("treeSelect").addEventListener("change", computeRelation
 
 function computeRelation() {
   const info = document.getElementById("relationInfo");
+
 
   const select = document.getElementById("treeSelect");
   const id = select.value;
@@ -333,6 +337,7 @@ function computeRelation() {
     `<strong>Eltern:</strong> ${fmt(parents)}<br>` +
     `<strong>Kinder:</strong> ${fmt(children)}<br>` +
     `<strong>Partner:</strong> ${fmt(spouses)}`;
+
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
