@@ -69,7 +69,6 @@ function showPage(sectionId) {
     loadMemberList();
   } else if (sectionId === "settings") {
     loadSettings();
- codex/update-loadprofiles-to-handle-fallback-data
 
   }
 }
@@ -141,7 +140,6 @@ async function loadProfiles() {
 
   let data = [];
   try {
- codex/update-loadprofiles-to-handle-fallback-data
     const res = await fetch(`${API_BASE}/api/persons`);
     if (!res.ok) throw new Error();
     data = await res.json();
@@ -365,7 +363,6 @@ document.getElementById("onlyMembers").addEventListener("change", saveSettings);
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
   loadGroups();
- codex/extract-languageselect-handler-to-applylanguage-function
   loadProfiles();
   const select = document.getElementById("languageSelect");
   if (select) applyLanguage(select.value);
