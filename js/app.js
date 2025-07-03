@@ -274,6 +274,7 @@ async function loadTree() {
   // Helper: build nested list items recursively
   function buildNode(person) {
     const li = document.createElement("li");
+    li.dataset.id = person.id;
     li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
@@ -298,6 +299,19 @@ function computeRelation() {
   const info = document.getElementById("relationInfo");
   // Platzhalter-Logik – Backend-Berechnung folgt
   info.textContent = "Verwandtschaftsberechnung folgt.";
+  const id = document.getElementById("treeSelect").value;
+  highlightNode(id);
+}
+
+function highlightNode(personId) {
+  const container = document.getElementById("treeContainer");
+  if (!container) return;
+  // remove previous selections
+  container.querySelectorAll("li.selected").forEach(li => li.classList.remove("selected"));
+  const target = container.querySelector(`li[data-id='${personId}']`);
+  if (target) {
+    target.classList.add("selected");
+  }
 }
 
 // === Block 8.2: Gruppen-Dashboard ===

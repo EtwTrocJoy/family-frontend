@@ -199,6 +199,9 @@ section form input[type="url"] {
 #treeContainer li {
   margin: 4px 0;                  /* Abstand zwischen Einträgen */
 }
+#treeContainer li.selected {
+  background: #fffa8b;            /* Hellgelbe Hervorhebung */
+}
 /* === Block 8: Gruppen‑Admin‑Dashboard & Einstellungen === */
 
 /* Dashboard-Abschnitt */
