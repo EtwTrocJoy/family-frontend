@@ -186,8 +186,18 @@ section form input[type="url"] {
 /* Baum-Container z.B. für SVG oder Canvas */
 #treeContainer {
   width: 100%;
-  height: 500px;                  /* Feste Höhe für Baumvisualisierung */
+  min-height: 300px;              /* Platz für die Baumdarstellung */
   border: 1px solid #ccc;         /* Rahmen um den Baum */
+  padding: 10px;                  /* etwas Innenabstand */
+}
+
+/* Verschachtelte Listen für den Baum */
+#treeContainer ul {
+  list-style: none;               /* Keine Aufzählungszeichen */
+  padding-left: 20px;             /* Einrückung für Kinder */
+}
+#treeContainer li {
+  margin: 4px 0;                  /* Abstand zwischen Einträgen */
 }
 /* === Block 8: Gruppen‑Admin‑Dashboard & Einstellungen === */
 

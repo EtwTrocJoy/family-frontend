@@ -260,15 +260,36 @@ async function loadTree() {
     }
   }
 
+
+  // Map person id -> person object for quick lookup
+  const byId = {};
   persons.forEach(p => {
-    const div = document.createElement("div");
-    div.textContent = `${p.name} (${p.birthYear || ''})`;
-    container.appendChild(div);
+    byId[p.id] = p;
     const opt = document.createElement("option");
     opt.value = p.id;
     opt.textContent = p.name;
     select.appendChild(opt);
   });
+
+  // Helper: build nested list items recursively
+  function buildNode(person) {
+    const li = document.createElement("li");
+    li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
+    if (person.children && person.children.length) {
+      const ul = document.createElement("ul");
+      person.children.forEach(cid => {
+        const child = byId[cid];
+        if (child) ul.appendChild(buildNode(child));
+      });
+      li.appendChild(ul);
+    }
+    return li;
+  }
+
+  const roots = persons.filter(p => !p.parents || p.parents.length === 0);
+  const tree = document.createElement("ul");
+  roots.forEach(r => tree.appendChild(buildNode(r)));
+  container.appendChild(tree);
 }
 
 document.getElementById("treeSelect").addEventListener("change", computeRelation);
