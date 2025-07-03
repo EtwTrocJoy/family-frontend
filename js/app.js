@@ -2,6 +2,8 @@
 // Update this URL when deploying to a different environment
 const API_BASE = "https://family-backend-1fat.onrender.com";
 let currentGroupId = null; // merken, in welcher Gruppe sich der Nutzer befindet
+// Globale Map von Personen-IDs auf Person-Objekte für schnelle Lookup
+let personMap = {};
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -270,6 +272,8 @@ async function loadTree() {
     opt.textContent = p.name;
     select.appendChild(opt);
   });
+  // Map global speichern für computeRelation
+  personMap = byId;
 
   // Helper: build nested list items recursively
   function buildNode(person) {
@@ -296,8 +300,39 @@ document.getElementById("treeSelect").addEventListener("change", computeRelation
 
 function computeRelation() {
   const info = document.getElementById("relationInfo");
-  // Platzhalter-Logik – Backend-Berechnung folgt
-  info.textContent = "Verwandtschaftsberechnung folgt.";
+
+  const select = document.getElementById("treeSelect");
+  const id = select.value;
+  if (!id || !personMap[id]) {
+    info.textContent = "";
+    return;
+  }
+
+  const person = personMap[id];
+
+  const resolveNames = ids =>
+    ids
+      .map(pid => personMap[pid])
+      .filter(Boolean)
+      .map(p => p.name);
+
+  const parents = resolveNames(person.parents || []);
+  const children = resolveNames(person.children || []);
+
+  let spouseIds = [];
+  if (Array.isArray(person.spouses)) {
+    spouseIds = person.spouses;
+  } else if (person.spouse) {
+    spouseIds = [person.spouse];
+  }
+  const spouses = resolveNames(spouseIds);
+
+  const fmt = arr => (arr.length ? arr.join(", ") : "keine");
+
+  info.innerHTML =
+    `<strong>Eltern:</strong> ${fmt(parents)}<br>` +
+    `<strong>Kinder:</strong> ${fmt(children)}<br>` +
+    `<strong>Partner:</strong> ${fmt(spouses)}`;
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
