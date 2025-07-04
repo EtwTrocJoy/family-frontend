@@ -10,51 +10,159 @@ let personMap = {};
 const translations = {
   de: {
     title: "👨‍👩‍👧‍👦 Familienplattform",
-    join: "Gruppe beitreten oder erstellen",
-    name: "Dein Name*:",
-    group: "Gruppe wählen:",
+    navProfiles: "🔍 Profile",
+    navGroups: "👪 Gruppen",
+    navTree: "🌳 Stammbaum",
+    navSettings: "⚙️ Einstellungen",
+    joinTitle: "Gruppe beitreten oder erstellen",
+    nameLabel: "Dein Name*:",
+    groupLabel: "Gruppe wählen:",
     languageLabel: "Sprache wählen:",
     joinBtn: "Beitreten",
+    toolsTitle: "🔎 Filter & Export",
+    filterNameLabel: "Nach Name filtern:",
+    filterYearLabel: "Nach Jahr filtern:",
+    applyFilter: "Filter anwenden",
+    exportBtn: "⬇️ Export CSV",
     profileHeadline: "Alle Profile in deiner Gruppe",
-    filter: "Filter anwenden",
-    export: "⬇️ Export CSV",
-    detail: "👤 Profil-Detail"
+    searchPlaceholder: "Suche nach Name, Ort...",
+    detailTitle: "👤 Profil-Detail",
+    editTitle: "Bearbeiten / Löschen",
+    editNameLabel: "Name:",
+    editYearLabel: "Geburtsjahr:",
+    saveBtn: "Speichern",
+    deleteBtn: "Löschen",
+    printTitle: "🖨️ Drucken & Export",
+    printBtn: "Profil drucken",
+    gedcomBtn: "Export GEDCOM",
+    treeTitle: "🌳 Dynamischer Stammbaum",
+    treeSelectLabel: "Person auswählen:",
+    dashboardTitle: "👪 Gruppen-Dashboard",
+    settingsTitle: "⚙️ Einstellungen",
+    publicLabel: "Gruppe öffentlich sichtbar",
+    membersLabel: "Nur Mitglieder sehen Beiträge"
   },
   en: {
     title: "👨‍👩‍👧‍👦 Family Platform",
-    join: "Join or Create Group",
-    name: "Your Name*:",
-    group: "Select Group:",
+    navProfiles: "🔍 Profiles",
+    navGroups: "👪 Groups",
+    navTree: "🌳 Family Tree",
+    navSettings: "⚙️ Settings",
+    joinTitle: "Join or Create Group",
+    nameLabel: "Your Name*:",
+    groupLabel: "Select Group:",
     languageLabel: "Select language:",
     joinBtn: "Join",
+    toolsTitle: "🔎 Filter & Export",
+    filterNameLabel: "Filter by name:",
+    filterYearLabel: "Filter by year:",
+    applyFilter: "Apply filter",
+    exportBtn: "⬇️ Export CSV",
     profileHeadline: "All profiles in your group",
-    filter: "Apply filter",
-    export: "⬇️ Export CSV",
-    detail: "👤 Profile Detail"
+    searchPlaceholder: "Search by name, place...",
+    detailTitle: "👤 Profile Detail",
+    editTitle: "Edit / Delete",
+    editNameLabel: "Name:",
+    editYearLabel: "Birth year:",
+    saveBtn: "Save",
+    deleteBtn: "Delete",
+    printTitle: "🖨️ Print & Export",
+    printBtn: "Print profile",
+    gedcomBtn: "Export GEDCOM",
+    treeTitle: "🌳 Family Tree",
+    treeSelectLabel: "Select person:",
+    dashboardTitle: "👪 Group Dashboard",
+    settingsTitle: "⚙️ Settings",
+    publicLabel: "Group publicly visible",
+    membersLabel: "Only members see posts"
   },
   fr: {
     title: "👨‍👩‍👧‍👦 Plateforme Familiale",
-    join: "Rejoindre ou créer un groupe",
-    name: "Ton nom*:",
-    group: "Choisir un groupe:",
+    navProfiles: "🔍 Profils",
+    navGroups: "👪 Groupes",
+    navTree: "🌳 Arbre généalogique",
+    navSettings: "⚙️ Paramètres",
+    joinTitle: "Rejoindre ou créer un groupe",
+    nameLabel: "Ton nom*:",
+    groupLabel: "Choisir un groupe:",
     languageLabel: "Choisir la langue:",
     joinBtn: "Rejoindre",
+    toolsTitle: "🔎 Filtrer & Exporter",
+    filterNameLabel: "Filtrer par nom:",
+    filterYearLabel: "Filtrer par année:",
+    applyFilter: "Appliquer le filtre",
+    exportBtn: "⬇️ Export CSV",
     profileHeadline: "Tous les profils de votre groupe",
-    filter: "Appliquer le filtre",
-    export: "⬇️ Export CSV",
-    detail: "👤 Détail du profil"
+    searchPlaceholder: "Rechercher par nom, lieu...",
+    detailTitle: "👤 Détail du profil",
+    editTitle: "Modifier / Supprimer",
+    editNameLabel: "Nom:",
+    editYearLabel: "Année de naissance:",
+    saveBtn: "Enregistrer",
+    deleteBtn: "Supprimer",
+    printTitle: "🖨️ Imprimer & Exporter",
+    printBtn: "Imprimer le profil",
+    gedcomBtn: "Exporter GEDCOM",
+    treeTitle: "🌳 Arbre généalogique",
+    treeSelectLabel: "Sélectionner une personne:",
+    dashboardTitle: "👪 Tableau de bord",
+    settingsTitle: "⚙️ Paramètres",
+    publicLabel: "Groupe visible publiquement",
+    membersLabel: "Seuls les membres voient les posts"
   }
 };
 
 function applyLanguage(lang) {
   const t = translations[lang];
-  document.getElementById('app-title').textContent = t.title;
-  document.querySelector('h2').textContent = t.join;
-  document.querySelector('label[for="languageSelect"]').textContent = "🌐 " + t.languageLabel;
-  document.querySelector('label input[name="name"]').previousSibling.textContent = t.name;
-  document.querySelector('button[type="submit"]').textContent = t.joinBtn;
-  document.querySelector('#profileOverview h2').textContent = t.profileHeadline;
-  document.querySelector('#profileTools h3').textContent = "🔎 " + t.filter + " & " + t.export;
+  const setText = (id, txt) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  };
+  const setPlaceholder = (id, txt) => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = txt;
+  };
+
+  setText('app-title', t.title);
+  setText('nav-profiles', t.navProfiles);
+  setText('nav-groups', t.navGroups);
+  setText('nav-tree', t.navTree);
+  setText('nav-settings', t.navSettings);
+
+  setText('label-language', '🌐 ' + t.languageLabel);
+  setText('join-title', t.joinTitle);
+  setText('label-name', t.nameLabel);
+  setText('label-group', t.groupLabel);
+  setText('btn-join', t.joinBtn);
+
+  setText('tools-title', t.toolsTitle);
+  setText('label-filter-name', t.filterNameLabel);
+  setText('label-filter-year', t.filterYearLabel);
+  setText('btn-apply-filter', t.applyFilter);
+  setText('btn-export', t.exportBtn);
+
+  setText('overview-title', t.profileHeadline);
+  setPlaceholder('searchBar', t.searchPlaceholder);
+
+  setText('detail-title', t.detailTitle);
+  setText('edit-title', t.editTitle);
+  setText('edit-label-name', t.editNameLabel);
+  setText('edit-label-year', t.editYearLabel);
+  setText('btn-save', t.saveBtn);
+  setText('btn-delete', t.deleteBtn);
+
+  setText('print-title', t.printTitle);
+  setText('btn-print', t.printBtn);
+  setText('btn-gedcom', t.gedcomBtn);
+
+  setText('tree-title', t.treeTitle);
+  setText('tree-select-label', t.treeSelectLabel);
+
+  setText('dashboard-title', t.dashboardTitle);
+
+  setText('settings-title', t.settingsTitle);
+  setText('label-public', t.publicLabel);
+  setText('label-only-members', t.membersLabel);
 }
 
 document.getElementById('languageSelect').addEventListener('change', e => {
@@ -423,8 +531,8 @@ document.getElementById("publicGroup").addEventListener("change", saveSettings);
 document.getElementById("onlyMembers").addEventListener("change", saveSettings);
 // === Block 8: Initialer Aufruf nach Laden der Seite ===
 window.addEventListener("DOMContentLoaded", () => {
-  loadGroups();
-  loadProfiles();
   const select = document.getElementById("languageSelect");
   if (select) applyLanguage(select.value);
+  loadGroups();
+  loadProfiles();
 });
