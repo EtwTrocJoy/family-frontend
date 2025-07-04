@@ -392,6 +392,10 @@ async function loadTree() {
     const li = document.createElement("li");
     li.dataset.id = person.id;
     li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
+    li.addEventListener("click", e => {
+      e.stopPropagation();
+      computeRelation(person.id);
+    });
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
       person.children.forEach(cid => {
@@ -415,9 +419,11 @@ document.getElementById("treeSelect").addEventListener("change", () => computeRe
 function computeRelation(personId) {
   const info = document.getElementById("relationInfo");
 
+  const select = document.getElementById("treeSelect");
   if (!personId) {
-    const select = document.getElementById("treeSelect");
     personId = select.value;
+  } else if (select) {
+    select.value = String(personId);
   }
 
   if (!personId || !byId[personId]) {
@@ -427,14 +433,10 @@ function computeRelation(personId) {
 
   const person = byId[personId];
 
-  const resolveNames = ids =>
-    (ids || [])
-      .map(pid => byId[pid])
-      .filter(Boolean)
-      .map(p => p.name);
+  const resolveIds = ids => (ids || []).map(pid => byId[pid]).filter(Boolean);
 
-  const parents = resolveNames(person.parents);
-  const children = resolveNames(person.children);
+  const parents = resolveIds(person.parents);
+  const children = resolveIds(person.children);
 
   let spouseIds = [];
   if (Array.isArray(person.spouses)) {
@@ -442,7 +444,7 @@ function computeRelation(personId) {
   } else if (person.spouse) {
     spouseIds = [person.spouse];
   }
-  const spouses = resolveNames(spouseIds);
+  const spouseObjs = resolveIds(spouseIds);
 
   // Geschwister bestimmen
   const siblingIds = [];
@@ -454,7 +456,7 @@ function computeRelation(personId) {
       });
     }
   });
-  const siblings = resolveNames(siblingIds);
+  const siblingObjs = resolveIds(siblingIds);
 
   // Großeltern bestimmen
   const grandIds = [];
@@ -466,7 +468,7 @@ function computeRelation(personId) {
       });
     }
   });
-  const grandparents = resolveNames(grandIds);
+  const grandObjs = resolveIds(grandIds);
 
   // Onkel und Tanten
   const auntUncleIds = [];
@@ -483,7 +485,7 @@ function computeRelation(personId) {
       });
     }
   });
-  const auntsUncles = resolveNames(auntUncleIds);
+  const auntUncleObjs = resolveIds(auntUncleIds);
 
   // Cousins und Cousinen
   const cousinIds = [];
@@ -495,21 +497,42 @@ function computeRelation(personId) {
       });
     }
   });
-  const cousins = resolveNames(cousinIds);
+  const cousinObjs = resolveIds(cousinIds);
 
-  const fmt = arr => (arr.length ? arr.join(", ") : "—");
+  const fmtLinks = persons =>
+    persons.length
+      ? persons
+          .map(p => `<a href="#" class="rel-link" data-id="${p.id}">${p.name}</a>`)
+          .join(", ")
+      : "—";
 
   info.innerHTML = `
-    <table>
-      <tr><th>Beziehung</th><th>Personen</th></tr>
-      <tr><td><strong>Eltern</strong></td><td>${fmt(parents)}</td></tr>
-      <tr><td><strong>Geschwister</strong></td><td>${fmt(siblings)}</td></tr>
-      <tr><td><strong>Großeltern</strong></td><td>${fmt(grandparents)}</td></tr>
-      <tr><td><strong>Onkel/Tante</strong></td><td>${fmt(auntsUncles)}</td></tr>
-      <tr><td><strong>Cousins/Cousinen</strong></td><td>${fmt(cousins)}</td></tr>
-      <tr><td><strong>Ehepartner</strong></td><td>${fmt(spouses)}</td></tr>
-      <tr><td><strong>Kinder</strong></td><td>${fmt(children)}</td></tr>
-    </table>`;
+    <ul>
+      <li><strong>Eltern:</strong> ${fmtLinks(parents)}</li>
+      <li><strong>Geschwister:</strong> ${fmtLinks(siblingObjs)}</li>
+      <li><strong>Großeltern:</strong> ${fmtLinks(grandObjs)}</li>
+      <li><strong>Onkel/Tante:</strong> ${fmtLinks(auntUncleObjs)}</li>
+      <li><strong>Cousins/Cousinen:</strong> ${fmtLinks(cousinObjs)}</li>
+      <li><strong>Ehepartner:</strong> ${fmtLinks(spouseObjs)}</li>
+      <li><strong>Kinder:</strong> ${fmtLinks(children)}</li>
+    </ul>`;
+
+  info.querySelectorAll(".rel-link").forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      computeRelation(link.dataset.id);
+    });
+  });
+
+  highlightNode(personId);
+}
+
+function highlightNode(personId) {
+  const container = document.getElementById("treeContainer");
+  if (!container) return;
+  container.querySelectorAll("li.selected").forEach(li => li.classList.remove("selected"));
+  const target = container.querySelector(`li[data-id='${personId}']`);
+  if (target) target.classList.add("selected");
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
