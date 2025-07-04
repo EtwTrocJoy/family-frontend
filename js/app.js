@@ -86,7 +86,13 @@ const translations = {
     dashboardTitle: "👪 Gruppen-Dashboard",
     settingsTitle: "⚙️ Einstellungen",
     publicLabel: "Gruppe öffentlich sichtbar",
-    membersLabel: "Nur Mitglieder sehen Beiträge"
+    membersLabel: "Nur Mitglieder sehen Beiträge",
+    parentsLabel: "Eltern",
+    siblingsLabel: "Geschwister",
+    grandparentsLabel: "Großeltern",
+    auntsUnclesLabel: "Onkel/Tanten",
+    childrenLabel: "Kinder",
+    cousinsLabel: "Cousins/Cousinen"
   },
   en: {
     title: "👨‍👩‍👧‍👦 Family Platform",
@@ -120,7 +126,13 @@ const translations = {
     dashboardTitle: "👪 Group Dashboard",
     settingsTitle: "⚙️ Settings",
     publicLabel: "Group publicly visible",
-    membersLabel: "Only members see posts"
+    membersLabel: "Only members see posts",
+    parentsLabel: "Parents",
+    siblingsLabel: "Siblings",
+    grandparentsLabel: "Grandparents",
+    auntsUnclesLabel: "Aunts/Uncles",
+    childrenLabel: "Children",
+    cousinsLabel: "Cousins"
   },
   fr: {
     title: "👨‍👩‍👧‍👦 Plateforme Familiale",
@@ -154,7 +166,13 @@ const translations = {
     dashboardTitle: "👪 Tableau de bord",
     settingsTitle: "⚙️ Paramètres",
     publicLabel: "Groupe visible publiquement",
-    membersLabel: "Seuls les membres voient les posts"
+    membersLabel: "Seuls les membres voient les posts",
+    parentsLabel: "Parents",
+    siblingsLabel: "Frères/Soeurs",
+    grandparentsLabel: "Grands-parents",
+    auntsUnclesLabel: "Oncles/Tantes",
+    childrenLabel: "Enfants",
+    cousinsLabel: "Cousins/Cousines"
   }
 };
 
@@ -589,11 +607,17 @@ function computeRelation(personId) {
 
   const fmt = arr => (arr.length ? arr.join(", ") : "—");
 
-  info.innerHTML =
-    `<strong>Eltern:</strong> ${fmt(parents)}<br>` +
-    `<strong>Geschwister:</strong> ${fmt(siblings)}<br>` +
-    `<strong>Kinder:</strong> ${fmt(children)}<br>` +
-    `<strong>Cousins/Cousinen:</strong> ${fmt(cousins)}`;
+  const lang = document.getElementById("languageSelect").value;
+  const t = translations[lang] || {};
+
+  info.innerHTML = `<ul>` +
+    `<li><strong>${t.parentsLabel || "Eltern"}:</strong> ${fmt(parents)}</li>` +
+    `<li><strong>${t.siblingsLabel || "Geschwister"}:</strong> ${fmt(siblings)}</li>` +
+    `<li><strong>${t.grandparentsLabel || "Großeltern"}:</strong> ${fmt(grandparents)}</li>` +
+    `<li><strong>${t.auntsUnclesLabel || "Onkel/Tanten"}:</strong> ${fmt(auntsUncles)}</li>` +
+    `<li><strong>${t.childrenLabel || "Kinder"}:</strong> ${fmt(children)}</li>` +
+    `<li><strong>${t.cousinsLabel || "Cousins/Cousinen"}:</strong> ${fmt(cousins)}</li>` +
+    `</ul>`;
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
