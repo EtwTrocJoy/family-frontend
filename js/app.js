@@ -8,6 +8,11 @@ let personMap = {};
 // Zusätzliche Referenz für alle Personen
 let byId = {};
 
+// Einfaches Tooltip-Element für Hover-Informationen
+const tooltip = document.createElement("div");
+tooltip.className = "tooltip hidden";
+document.body.appendChild(tooltip);
+
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -392,6 +397,28 @@ async function loadTree() {
     const li = document.createElement("li");
     li.dataset.id = person.id;
     li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
+
+    const contentFor = p => {
+      let html = `<strong>${p.name}</strong>`;
+      if (p.birthYear) html += ` (${p.birthYear})`;
+      Object.entries(p).forEach(([k, v]) => {
+        if (["id", "name", "birthYear", "parents", "children", "spouses", "spouse"].includes(k)) return;
+        if (typeof v !== "object" && v !== undefined) html += `<br>${k}: ${v}`;
+      });
+      return html;
+    };
+
+    li.addEventListener("mouseenter", e => {
+      tooltip.innerHTML = contentFor(person);
+      tooltip.classList.remove("hidden");
+    });
+    li.addEventListener("mousemove", e => {
+      tooltip.style.left = `${e.pageX + 10}px`;
+      tooltip.style.top = `${e.pageY + 10}px`;
+    });
+    li.addEventListener("mouseleave", () => {
+      tooltip.classList.add("hidden");
+    });
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
       person.children.forEach(cid => {
