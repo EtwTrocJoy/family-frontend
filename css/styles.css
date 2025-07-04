@@ -237,4 +237,20 @@ section form input[type="url"] {
 #settings label {
   display: block;
   margin-bottom: 8px;
-} 
+}
+
+/* Tooltip für Personendetails im Stammbaum */
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  z-index: 1000;
+  white-space: nowrap;
+}
+.tooltip.hidden {
+  display: none;
+}
