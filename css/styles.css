@@ -211,6 +211,10 @@ section form input[type="url"] {
   height: 2px;
   background: #aaa;
 }
+.partnerGroup > div {
+  display: flex;
+  gap: 6px;
+}
 .selected {
   background-color: #fffbcc;      /* Markierung */
   font-weight: bold;

@@ -415,6 +415,11 @@ async function exportProfiles() {
   }
 }
 
+// Zeigt den kompletten Baum mit Partnern an
+function renderTreeView() {
+  buildFullTree(personMap, 'treeContainer');
+}
+
 // === Block 8.1: Stammbaum anzeigen ===
 async function loadTree() {
   const container = document.getElementById("treeContainer");
@@ -449,6 +454,10 @@ async function loadTree() {
   });
   // globale Referenzen setzen
   byId = personMap;
+
+  // Neue Darstellungsfunktion für die vollständige Baumansicht
+  renderTreeView();
+  return;
 
   // Helper: build nested list items recursively
   function buildNode(person) {
@@ -528,12 +537,19 @@ function computeRelation(personId) {
     personId = select.value;
   }
 
+  document
+    .querySelectorAll("#treeContainer .selected")
+    .forEach(el => el.classList.remove("selected"));
+
   if (!personId || !byId[personId]) {
     info.textContent = "";
     return;
   }
 
   const person = byId[personId];
+
+  const selEl = document.querySelector(`#treeContainer [data-id='${personId}']`);
+  if (selEl) selEl.classList.add("selected");
 
   const resolveNames = ids =>
     (ids || [])
