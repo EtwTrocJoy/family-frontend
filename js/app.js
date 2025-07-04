@@ -13,6 +13,45 @@ const tooltip = document.createElement("div");
 tooltip.className = "tooltip hidden";
 document.body.appendChild(tooltip);
 
+// Hilfsfunktion, um rekursiv Knoten für den Stammbaum zu bauen
+function buildNode(person) {
+  const li = document.createElement("li");
+  li.dataset.id = person.id;
+  li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
+
+  const contentFor = p => {
+    let html = `<strong>${p.name}</strong>`;
+    if (p.birthYear) html += ` (${p.birthYear})`;
+    Object.entries(p).forEach(([k, v]) => {
+      if (["id", "name", "birthYear", "parents", "children", "spouses", "spouse"].includes(k)) return;
+      if (typeof v !== "object" && v !== undefined) html += `<br>${k}: ${v}`;
+    });
+    return html;
+  };
+
+  li.addEventListener("mouseenter", () => {
+    tooltip.innerHTML = contentFor(person);
+    tooltip.classList.remove("hidden");
+  });
+  li.addEventListener("mousemove", e => {
+    tooltip.style.left = `${e.pageX + 10}px`;
+    tooltip.style.top = `${e.pageY + 10}px`;
+  });
+  li.addEventListener("mouseleave", () => {
+    tooltip.classList.add("hidden");
+  });
+
+  if (person.children && person.children.length) {
+    const ul = document.createElement("ul");
+    person.children.forEach(cid => {
+      const child = personMap[cid];
+      if (child) ul.appendChild(buildNode(child));
+    });
+    li.appendChild(ul);
+  }
+  return li;
+}
+
 // === Block 1: Sprachumschaltung ===
 const translations = {
   de: {
@@ -183,6 +222,7 @@ function showPage(sectionId) {
   document.getElementById(sectionId).style.display = "block";
   if (sectionId === "treeView") {
     loadTree();
+    loadFullTreeView();
   } else if (sectionId === "groupDashboard") {
     loadMemberRequests();
     loadMemberList();
@@ -438,6 +478,18 @@ async function loadTree() {
   container.appendChild(tree);
 }
 
+// Stellt den gesamten Baum der aktuellen Gruppe auf Basis von personMap dar
+function loadFullTreeView() {
+  const container = document.getElementById("treeContainer");
+  container.innerHTML = "";
+  const persons = Object.values(personMap);
+  if (!persons.length) return;
+  const roots = persons.filter(p => !p.parents || p.parents.length === 0);
+  const tree = document.createElement("ul");
+  roots.forEach(r => tree.appendChild(buildNode(r)));
+  container.appendChild(tree);
+}
+
 document.getElementById("treeSelect").addEventListener("change", () => computeRelation());
 
 // Ermittelt verschiedene Verwandtschaften für eine Person und zeigt das Ergebnis
@@ -537,17 +589,11 @@ function computeRelation(personId) {
 
   const fmt = arr => (arr.length ? arr.join(", ") : "—");
 
-  info.innerHTML = `
-    <table>
-      <tr><th>Beziehung</th><th>Personen</th></tr>
-      <tr><td><strong>Eltern</strong></td><td>${fmt(parents)}</td></tr>
-      <tr><td><strong>Geschwister</strong></td><td>${fmt(siblings)}</td></tr>
-      <tr><td><strong>Großeltern</strong></td><td>${fmt(grandparents)}</td></tr>
-      <tr><td><strong>Onkel/Tante</strong></td><td>${fmt(auntsUncles)}</td></tr>
-      <tr><td><strong>Cousins/Cousinen</strong></td><td>${fmt(cousins)}</td></tr>
-      <tr><td><strong>Ehepartner</strong></td><td>${fmt(spouses)}</td></tr>
-      <tr><td><strong>Kinder</strong></td><td>${fmt(children)}</td></tr>
-    </table>`;
+  info.innerHTML =
+    `<strong>Eltern:</strong> ${fmt(parents)}<br>` +
+    `<strong>Geschwister:</strong> ${fmt(siblings)}<br>` +
+    `<strong>Kinder:</strong> ${fmt(children)}<br>` +
+    `<strong>Cousins/Cousinen:</strong> ${fmt(cousins)}`;
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
