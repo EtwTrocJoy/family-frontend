@@ -392,6 +392,14 @@ async function loadTree() {
     const li = document.createElement("li");
     li.dataset.id = person.id;
     li.textContent = `${person.name}${person.birthYear ? ` (${person.birthYear})` : ""}`;
+    li.addEventListener("click", e => {
+      // Remove selection from any previously selected nodes
+      container.querySelectorAll("li.selected").forEach(node => node.classList.remove("selected"));
+      // Mark the clicked node as selected
+      li.classList.add("selected");
+      computeRelation(li);
+      e.stopPropagation();
+    });
     if (person.children && person.children.length) {
       const ul = document.createElement("ul");
       person.children.forEach(cid => {
@@ -414,6 +422,15 @@ document.getElementById("treeSelect").addEventListener("change", () => computeRe
 // Ermittelt verschiedene Verwandtschaften für eine Person und zeigt das Ergebnis
 function computeRelation(personId) {
   const info = document.getElementById("relationInfo");
+  if (personId && typeof personId === "object") {
+    if (personId.dataset && personId.dataset.id) {
+      personId = personId.dataset.id;
+    } else if (personId.currentTarget && personId.currentTarget.dataset) {
+      personId = personId.currentTarget.dataset.id;
+    } else if (personId.target && personId.target.dataset) {
+      personId = personId.target.dataset.id;
+    }
+  }
 
   if (!personId) {
     const select = document.getElementById("treeSelect");
