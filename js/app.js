@@ -5,6 +5,8 @@ let currentGroupId = null; // merken, in welcher Gruppe sich der Nutzer befindet
 
 // Globale Map von Personen-IDs auf Person-Objekte für schnelle Lookup
 let personMap = {};
+// Zusätzliche Referenz für alle Personen
+let byId = {};
 
 // === Block 1: Sprachumschaltung ===
 const translations = {
@@ -382,8 +384,8 @@ async function loadTree() {
     opt.textContent = p.name;
     select.appendChild(opt);
   });
-  // Map global speichern für computeRelation
-  personMap = byId;
+  // globale Referenzen setzen
+  byId = personMap;
 
   // Helper: build nested list items recursively
   function buildNode(person) {
@@ -407,29 +409,32 @@ async function loadTree() {
   container.appendChild(tree);
 }
 
-document.getElementById("treeSelect").addEventListener("change", computeRelation);
+document.getElementById("treeSelect").addEventListener("change", () => computeRelation());
 
-function computeRelation() {
+// Ermittelt verschiedene Verwandtschaften für eine Person und zeigt das Ergebnis
+function computeRelation(personId) {
   const info = document.getElementById("relationInfo");
 
+  if (!personId) {
+    const select = document.getElementById("treeSelect");
+    personId = select.value;
+  }
 
-  const select = document.getElementById("treeSelect");
-  const id = select.value;
-  if (!id || !personMap[id]) {
+  if (!personId || !byId[personId]) {
     info.textContent = "";
     return;
   }
 
-  const person = personMap[id];
+  const person = byId[personId];
 
   const resolveNames = ids =>
-    ids
-      .map(pid => personMap[pid])
+    (ids || [])
+      .map(pid => byId[pid])
       .filter(Boolean)
       .map(p => p.name);
 
-  const parents = resolveNames(person.parents || []);
-  const children = resolveNames(person.children || []);
+  const parents = resolveNames(person.parents);
+  const children = resolveNames(person.children);
 
   let spouseIds = [];
   if (Array.isArray(person.spouses)) {
@@ -439,13 +444,72 @@ function computeRelation() {
   }
   const spouses = resolveNames(spouseIds);
 
-  const fmt = arr => (arr.length ? arr.join(", ") : "keine");
+  // Geschwister bestimmen
+  const siblingIds = [];
+  (person.parents || []).forEach(pid => {
+    const parent = byId[pid];
+    if (parent && parent.children) {
+      parent.children.forEach(cid => {
+        if (cid !== person.id && !siblingIds.includes(cid)) siblingIds.push(cid);
+      });
+    }
+  });
+  const siblings = resolveNames(siblingIds);
 
-  info.innerHTML =
-    `<strong>Eltern:</strong> ${fmt(parents)}<br>` +
-    `<strong>Kinder:</strong> ${fmt(children)}<br>` +
-    `<strong>Partner:</strong> ${fmt(spouses)}`;
+  // Großeltern bestimmen
+  const grandIds = [];
+  (person.parents || []).forEach(pid => {
+    const par = byId[pid];
+    if (par && par.parents) {
+      par.parents.forEach(gpid => {
+        if (!grandIds.includes(gpid)) grandIds.push(gpid);
+      });
+    }
+  });
+  const grandparents = resolveNames(grandIds);
 
+  // Onkel und Tanten
+  const auntUncleIds = [];
+  grandIds.forEach(gpid => {
+    const grand = byId[gpid];
+    if (grand && grand.children) {
+      grand.children.forEach(cid => {
+        if (
+          !(person.parents || []).includes(cid) &&
+          !auntUncleIds.includes(cid)
+        ) {
+          auntUncleIds.push(cid);
+        }
+      });
+    }
+  });
+  const auntsUncles = resolveNames(auntUncleIds);
+
+  // Cousins und Cousinen
+  const cousinIds = [];
+  auntUncleIds.forEach(aid => {
+    const au = byId[aid];
+    if (au && au.children) {
+      au.children.forEach(cid => {
+        if (!cousinIds.includes(cid)) cousinIds.push(cid);
+      });
+    }
+  });
+  const cousins = resolveNames(cousinIds);
+
+  const fmt = arr => (arr.length ? arr.join(", ") : "—");
+
+  info.innerHTML = `
+    <table>
+      <tr><th>Beziehung</th><th>Personen</th></tr>
+      <tr><td><strong>Eltern</strong></td><td>${fmt(parents)}</td></tr>
+      <tr><td><strong>Geschwister</strong></td><td>${fmt(siblings)}</td></tr>
+      <tr><td><strong>Großeltern</strong></td><td>${fmt(grandparents)}</td></tr>
+      <tr><td><strong>Onkel/Tante</strong></td><td>${fmt(auntsUncles)}</td></tr>
+      <tr><td><strong>Cousins/Cousinen</strong></td><td>${fmt(cousins)}</td></tr>
+      <tr><td><strong>Ehepartner</strong></td><td>${fmt(spouses)}</td></tr>
+      <tr><td><strong>Kinder</strong></td><td>${fmt(children)}</td></tr>
+    </table>`;
 }
 
 // === Block 8.2: Gruppen-Dashboard ===
