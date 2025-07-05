@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>👨‍👩‍👧‍👦 Familienplattform</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1 id="app-title">👨‍👩‍👧‍👦 Familienplattform</h1>
+    <label for="languageSelect">🌐 Sprache wählen:</label>
+    <select id="languageSelect">
+      <option value="de">Deutsch</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+  </header>
+
+  <nav id="mainNav">
+    <button onclick="showPage('profiles')">🔍 Profile</button>
+    <button onclick="showPage('groups')">👪 Gruppen</button>
+    <button onclick="showPage('treeView')">🌳 Stammbaum</button>
+    <button onclick="showPage('settings')">⚙️ Einstellungen</button>
+  </nav>
+
+  <!-- === Gruppenbeitritt === -->
+  <section id="groupLogin">
+    <h2>Gruppe beitreten oder erstellen</h2>
+    <form id="joinGroupForm">
+      <label>Dein Name*: <input type="text" name="name" required /></label>
+      <label>Gruppe wählen: <select name="groupId" id="groupSelect"></select></label>
+      <button type="submit">Beitreten</button>
+    </form>
+    <p id="groupMessage"></p>
+  </section>
+
+  <!-- === Profile === -->
+  <section id="profiles" style="display:none">
+    <h2 id="profileHeadline">Alle Profile in deiner Gruppe</h2>
+    <div id="profileTools">
+      <label>Nach Name: <input type="text" id="filterName" /></label>
+      <label>Nach Jahr: <input type="number" id="filterYear" /></label>
+      <button onclick="applyFilters()">Filter anwenden</button>
+      <button onclick="exportProfiles()">⬇️ Export CSV</button>
+    </div>
+    <ul id="profileList"></ul>
+  </section>
+
+  <!-- === Profil-Details === -->
+  <section id="profileDetail" style="display:none">
+    <h2>👤 Profil-Detail</h2>
+    <div id="profileData"></div>
+    <form id="editProfileForm">
+      <input type="hidden" name="id" />
+      <label>Name: <input type="text" name="name" required /></label>
+      <label>Geburtsjahr: <input type="number" name="birthYear" required /></label>
+      <button type="submit">Speichern</button>
+      <button type="button" onclick="deleteProfile()">Löschen</button>
+    </form>
+  </section>
+
+  <!-- === Stammbaum === -->
+  <section id="treeView" style="display:none">
+    <h2>🌳 Stammbaum</h2>
+    <div id="treeContainer"><!-- Hier entsteht der Baum --></div>
+    <label id="tree-select-label">Person auswählen:
+      <select id="treeSelect"></select>
+    </label>
+    <p id="relationInfo"></p>
+  </section>
+
+  <!-- === Einstellungen === -->
+  <section id="settings" style="display:none">
+    <h2>⚙️ Einstellungen</h2>
+    <label><input type="checkbox" id="publicGroup" /> Gruppe öffentlich sichtbar</label><br>
+    <label><input type="checkbox" id="onlyMembers" /> Nur Mitglieder sehen Inhalte</label>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
+<!-- === GRUPPENAUSWAHL & BEITRITT === -->
+  <section id="groupLogin"><!-- Abschnitt für Gruppenbeitritt -->
+    <h2 id="join-title">Gruppe beitreten oder erstellen</h2>
+    <form id="joinGroupForm">
+      <label id="nameLabel">Dein Name*: <input type="text" name="name" required></label>
+      <label id="groupLabel">Gruppe wählen:
+        <select name="groupId" id="groupSelect"></select>
+      </label>
+      <button type="submit" id="joinBtn">Beitreten</button>
+    </form>
+    <p id="groupMessage"></p>
+  </section>
+
+  <!-- === FILTER & EXPORT TOOLS === -->
+  <section id="profileTools" style="display:none">
+    <h3 id="toolsTitle">🔎 Filter & Export</h3>
+    <label id="filterNameLabel">Nach Name filtern:
+      <input type="text" id="filterName" />
+    </label>
+    <label id="filterYearLabel">Nach Jahr filtern:
+      <input type="number" id="filterYear" />
+    </label>
+    <button onclick="applyFilters()" id="applyFilter">Filter anwenden</button>
+    <button onclick="exportProfiles()" id="exportBtn">⬇️ Export CSV</button>
+  </section>
+
+  <!-- === PROFILÜBERSICHT === -->
+  <section id="profileOverview" style="display:none">
+    <h2 id="profileHeadline">Alle Profile in deiner Gruppe</h2>
+    <input type="text" id="searchBar" placeholder="Suche nach Name, Ort...">
+    <ul id="profileList"></ul>
+  </section>
+  <!-- === PROFIL-DETAIL & BEARBEITUNG === -->
+  <section id="profileDetail" style="display:none">
+    <h2 id="detailTitle">👤 Profil-Detail</h2>
+    <div id="profileData"></div>
+
+    <h3 id="editTitle">Bearbeiten / Löschen</h3>
+    <form id="editProfileForm">
+      <input type="hidden" name="id" />
+      <label id="editNameLabel">Name: <input type="text" name="name" required /></label>
+      <label id="editYearLabel">Geburtsjahr: <input type="number" name="birthYear" required /></label>
+      <button type="submit" id="saveBtn">Speichern</button>
+      <button type="button" onclick="deleteProfile()">Löschen</button>
+    </form>
+  </section>
+
+  <!-- === DRUCK & GEDCOM EXPORT === -->
+  <section id="printExport" style="display:none">
+    <h3 id="print-title">🖨️ Drucken & Export</h3>
+    <button onclick="printProfile()" id="btn-print">Profil drucken</button>
+    <button onclick="exportGedcom()" id="btn-gedcom">Export GEDCOM</button>
+  </section>
+
+  <!-- === STAMMBAUM & VERWANDTSCHAFT === -->
+  <section id="treeView" style="display:none">
+    <h2 id="tree-title">🌳 Dynamischer Stammbaum</h2>
+    <div id="treeContainer"><!-- Hier wird die verschachtelte Baumstruktur erzeugt --></div>
+    <label id="tree-select-label">Person auswählen:
+      <select id="treeSelect"></select>
+    </label>
+    <p id="relationInfo"></p>
+  </section>
+  <!-- === GRUPPEN-ADMIN DASHBOARD === -->
+  <section id="groupDashboard" style="display:none">
+    <h2 id="dashboard-title">👪 Gruppen-Dashboard</h2>
+    <h3>Offene Mitgliedsanfragen</h3>
+    <ul id="memberRequests"><!-- Liste der ausstehenden Beitritte --></ul>
+    <h3>Bestätigte Mitglieder</h3>
+    <ul id="memberList"><!-- Liste der bestätigten Mitglieder --></ul>
+  </section>
+
+  <!-- === EINSTELLUNGEN & PRIVATSPHÄRE === -->
+  <section id="settings" style="display:none">
+    <h2 id="settings-title">⚙️ Einstellungen</h2>
+    <label><input type="checkbox" id="publicGroup" /> <span id="label-public">Gruppe öffentlich sichtbar</span></label>
+    <label><input type="checkbox" id="onlyMembers" /> <span id="label-only-members">Nur Mitglieder sehen Beiträge</span></label>
+    <!-- Weitere Optionen können hier ergänzt werden -->
+  </section>
+
+  <!-- === JAVASCRIPT-EINBINDUNG === -->
+  <script src="js/app.js"></script>
+</body>
+</html>

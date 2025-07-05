@@ -1,260 +1,358 @@
-/* === Block 1: Basis-Stile für den gesamten Body und typische Elemente === */
+/* === CSS Block 1: Allgemeine Layout- und Schriftdefinition === */
 
-/* Gesamte Seite: Abstand, Schrift und Hintergrund */
 body {
-  font-family: Arial, sans-serif; /* Gut lesbare Standardschrift */
-  margin: 0;                      /* Kein Außenabstand */
-  padding: 20px;                  /* Innenabstand rundum */
-  background: #f3f3f3;            /* Hellgrauer Seitenhintergrund */
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+  color: #333;
 }
 
-/* Standard für alle Sektionen, Header & Nav */
-header, nav, section {
-  background: #fff;               /* Weißer Hintergrund */
-  padding: 15px;                  /* Innenabstand */
-  margin-bottom: 20px;            /* Abstand nach unten */
-  border-radius: 6px;             /* Abgerundete Ecken */
-  box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Leichter Schatten */
-}
-
-/* Links und Buttons in allen Sektionen */
-button, input, select {
-  font-size: 1em;                 /* Einheitliche Schriftgröße */
-  padding: 6px;                   /* Innenabstand in Formularfeldern */
-  margin-top: 6px;                /* Abstand nach oben */
-}
-
-/* Standardüberschriften */
-h1, h2, h3 {
-  margin: 0 0 10px;               /* Oben 0, unten 10px */
-}
-/* === Block 2: Header & Hauptnavigation === */
-
-/* Kopfbereich mit Titel und Sprachauswahl */
 header {
-  display: flex;                  /* Flexbox für horizontale Ausrichtung */
-  align-items: center;            /* Vertikal zentriert */
-  justify-content: space-between; /* Abstand zwischen Titel und Select */
-}
-
-/* Seitentitel */
-header #app-title {
-  font-size: 1.5em;               /* Größere Schrift für Titel */
-}
-
-/* Navigations-Buttons */
-nav button {
-  margin-right: 10px;             /* Abstand zwischen den Buttons */
-  cursor: pointer;                /* Zeiger-Cursor bei Hover */
-  background: #e0e0e0;            /* Leicht grauer Hintergrund */
-  border: none;                   /* Kein Rahmen */
-  border-radius: 4px;             /* Leichte Abrundung */
-}
-
-/* Hover-Effekt für Navigation */
-nav button:hover {
-  background: #d0d0d0;            /* Etwas dunkler beim Überfahren */
-}
-/* === Block 3: Formulare für Gruppen‑Beitritt und Profilübersicht === */
-
-/* Formular-Labels blockweise */
-section form label {
-  display: block;                 /* Je Label auf eigener Zeile */
-  margin-bottom: 8px;             /* Abstand nach unten */
-}
-
-/* Select- und Input-Felder */
-section form select,
-section form input[type="text"],
-section form input[type="number"],
-section form input[type="email"],
-section form input[type="url"] {
-  width: 100%;                    /* Volle Breite des Containers */
-  box-sizing: border-box;         /* Padding in Breite eingerechnet */
-}
-
-/* Container für Profilübersicht */
-#profileOverview {
-  max-width: 600px;               /* Maximale Breite */
-  margin: 0 auto;                 /* Zentriert */
-}
-/* === Block 4: Profilliste, Such‑ und Filter‑Tools === */
-
-/* Suchfeld oben in der Liste */
-#searchBar,
-#filterName,
-#filterYear {
-  width: calc(50% - 12px);        /* Je 50% minus Padding-Abzug */
-  margin-right: 10px;             /* Abstand zum nächsten Feld */
-}
-
-/* Buttons für Filter & Export */
-#profileTools button {
-  background: #4CAF50;            /* Grüner Hintergrund */
-  color: white;                   /* Weißer Text */
-  border: none;
-  border-radius: 4px;
-  margin-right: 8px;
-  cursor: pointer;
-}
-
-/* Profilliste als ungeordnete Liste */
-#profileList {
-  list-style: none;               /* Keine Aufzählungszeichen */
-  padding: 0;                     /* Kein Padding */
-}
-
-/* Listeneinträge */
-#profileList li {
-  padding: 8px;                   /* Innenabstand */
-  border-bottom: 1px solid #ddd;  /* Trennlinie */
-  cursor: pointer;                /* Zeiger bei Hover */
-}
-
-/* Hover-Effekt für Listeneinträge */
-#profileList li:hover {
-  background: #f0f0f0;            /* Hellgrauer Hintergrund */
-}
-/* === Block 5: Detailansicht & Bearbeitungsformular === */
-
-/* Container für Detaildaten */
-#profileDetail {
-  max-width: 600px;
-  margin: 0 auto;
-  background: #fafafa;            /* Leicht grauer Hintergrund */
-  padding: 20px;
-}
-
-/* Formular in Detailansicht */
-#editProfileForm label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-#editProfileForm input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Speichern- und Löschen‑Buttons */
-#editProfileForm button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#editProfileForm button[type="submit"] {
-  background: #2196F3;            /* Blau für Speichern */
+  background-color: #4a90e2;
   color: white;
-}
-
-#editProfileForm button[type="button"] {
-  background: #f44336;            /* Rot für Löschen */
-  color: white;
-}
-/* === Block 6: Drucken- und GEDCOM‑Buttons === */
-
-/* Container anzeigen, wenn aktiviert */
-#printExport {
-  max-width: 600px;
-  margin: 20px auto;
+  padding: 1em;
   text-align: center;
 }
 
-/* Druck- und Exportbuttons */
-#printExport button {
-  margin: 0 10px;
-  padding: 8px 16px;
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+select, input, button {
+  font-size: 1em;
+  padding: 0.3em;
+  margin: 0.5em 0;
+}
+
+label {
+  display: block;
+  margin: 0.5em 0;
+}
+/* === CSS Block 2: Navigation, Seitenbereiche, Formulare === */
+
+nav#mainNav {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  background-color: #ddd;
+  padding: 0.5em;
+}
+
+nav#mainNav button {
+  background-color: #ffffff;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+nav#mainNav button:hover {
+  background-color: #eee;
+}
+
+section {
+  margin: 1em auto;
+  max-width: 800px;
+  background-color: white;
+  padding: 1em;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+/* === CSS Block 3: Profil-Listen, Suchleiste, Detailansicht === */
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#profileList li {
+  padding: 0.3em 0.5em;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+#profileList li:hover {
+  background-color: #f2f2f2;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.5em;
+  margin: 0.3em 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 0.5em;
+  padding: 0.5em 1em;
+  background-color: #007acc;
+  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-#printExport button:hover {
-  opacity: 0.9;                   /* Leichtes Ausgrauen beim Hover */
+button:hover {
+  background-color: #005fa3;
 }
-/* === Block 7: Dynamischer Stammbaum (Canvas/SVG) === */
+/* === CSS Block 4: Baumdarstellung, Verwandtschaft, Tooltip === */
 
-/* Container für den Baum */
-#treeView {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* Baum-Container z.B. für SVG oder Canvas */
 #treeContainer {
   width: 100%;
-  min-height: 300px;              /* Platz für die Baumdarstellung */
-  border: 1px solid #ccc;         /* Rahmen um den Baum */
-  padding: 10px;                  /* etwas Innenabstand */
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #fafafa;
 }
 
-/* Verschachtelte Listen für den Baum */
 #treeContainer ul {
-  list-style: none;               /* Keine Aufzählungszeichen */
-  padding-left: 20px;             /* Einrückung für Kinder */
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 0.5em;
 }
+
 #treeContainer li {
-  position: relative;             /* für die Verbindungslinie */
-  padding-left: 20px;             /* Platz für die Linie */
-  margin: 4px 0;                  /* Abstand zwischen Einträgen */
-  border-left: 2px solid #aaa;    /* Vertikale Linie */
+  margin: 4px 0;
+  position: relative;
 }
+
+/* Linie zum Kind */
 #treeContainer li::before {
-  content: "";                    /* horizontale Linie */
+  content: "";
   position: absolute;
-  top: 0;
+  top: -0.4em;
   left: -10px;
   width: 10px;
-  height: 2px;
-  background: #aaa;
-}
-.partnerGroup > div {
-  display: flex;
-  gap: 6px;
-}
-.selected {
-  background-color: #fffbcc;      /* Markierung */
-  font-weight: bold;
-}
-#treeContainer li.selected {
-  background: #fffa8b;            /* Hellgelbe Hervorhebung */
-}
-/* === Block 8: Gruppen‑Admin‑Dashboard & Einstellungen === */
-
-/* Dashboard-Abschnitt */
-#groupDashboard {
-  max-width: 800px;
-  margin: 0 auto;
+  height: 1px;
+  background-color: #999;
 }
 
-/* Listen für Anfragen & Mitglieder */
-#memberRequests li,
-#memberList li {
-  padding: 6px;
-  border-bottom: 1px solid #ddd;
+/* Verwandtschaftsanzeige */
+#relationInfo {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #eef;
+  border: 1px solid #99c;
+  border-radius: 4px;
+  font-size: 0.95em;
 }
 
-/* Toggle-Checkboxen in Einstellungen */
-#settings label {
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* Tooltip für Personendetails im Stammbaum */
+/* Tooltip für Personenvorschau */
 .tooltip {
   position: absolute;
-  pointer-events: none;
-  background: #333;
-  color: #fff;
-  padding: 4px 8px;
+  background-color: #fff;
+  color: #333;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  max-width: 250px;
+  border-radius: 5px;
+  font-size: 0.85em;
+}
+
+.tooltip.hidden {
+  display: none;
+}
+/* === CSS Block 5: Gruppen-Dashboard, Buttons, Privatsphäre === */
+
+/* Gruppen-Dashboard */
+#groupDashboard {
+  background-color: #f0f8ff;
+  border: 1px solid #aad;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 6px;
+}
+
+#groupDashboard ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#groupDashboard li {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background-color: #e9f0ff;
   border-radius: 4px;
-  font-size: 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Admin-Aktionen */
+#groupDashboard button {
+  margin-left: 5px;
+  padding: 3px 6px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#groupDashboard button:hover {
+  background-color: #d0e0ff;
+}
+
+/* Einstellungen & Privatsphäre */
+#settings {
+  margin-top: 25px;
+  padding: 15px;
+  border: 1px solid #bbb;
+  background-color: #fefefe;
+  border-radius: 5px;
+}
+
+#settings label {
+  display: block;
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+#settings input[type="checkbox"] {
+  margin-right: 6px;
+}
+/* === CSS Block 6: Druckansicht, Medien, Export-Tools === */
+
+/* Druck- und Exportbereich */
+#printExport {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #fff5e6;
+  border: 1px dashed #f0b73d;
+  border-radius: 5px;
+}
+
+#printExport button {
+  margin-right: 10px;
+  padding: 6px 10px;
+  font-size: 0.95em;
+  cursor: pointer;
+  border: 1px solid #f0b73d;
+  background-color: #fffbe6;
+  border-radius: 4px;
+}
+
+#printExport button:hover {
+  background-color: #fff0cc;
+}
+
+/* Medienverwaltung (optional für spätere Erweiterung) */
+.media-upload {
+  margin-top: 10px;
+}
+
+.media-upload input[type="file"] {
+  margin-top: 5px;
+}
+
+.media-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.media-list li {
+  padding: 4px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9em;
+}
+/* === CSS Block 7: Tooltip, Verwandtschaftsanzeige, Highlight === */
+
+/* Tooltip für Personendetails beim Hover im Baum */
+.tooltip {
+  position: absolute;
+  background-color: #ffffcc;
+  border: 1px solid #999;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  pointer-events: none;
   z-index: 1000;
-  white-space: nowrap;
+  max-width: 250px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
 }
 .tooltip.hidden {
   display: none;
+}
+
+/* Verwandtschaftsausgabe (unterhalb Stammbaum) */
+#relationInfo {
+  margin-top: 15px;
+  background: #eef;
+  padding: 10px;
+  border-left: 4px solid #88a;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+/* Tabelle für Beziehungen */
+#relationInfo table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#relationInfo th,
+#relationInfo td {
+  border: 1px solid #ccd;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+/* Hervorhebung der gewählten Person */
+.selected-node {
+  font-weight: bold;
+  background-color: #d0e9ff;
+  border-left: 4px solid #339;
+  padding-left: 6px;
+}
+/* === CSS Block 8: Druck, responsiv, Footer === */
+
+/* Druckoptimierung: nur relevante Bereiche drucken */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #profileDetail, #treeView, #relationInfo, #printExport {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  nav, header, footer {
+    display: none;
+  }
+}
+
+/* Mobile-Optimierung */
+@media screen and (max-width: 600px) {
+  nav button {
+    font-size: 0.9em;
+    padding: 6px;
+  }
+  label, input, select, button {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 4px 0;
+  }
+  section {
+    padding: 8px;
+  }
+}
+
+/* Footer (optional, wenn gewünscht) */
+footer {
+  margin-top: 30px;
+  padding: 10px;
+  font-size: 0.8em;
+  text-align: center;
+  color: #666;
 }
