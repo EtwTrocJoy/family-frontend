@@ -297,3 +297,15 @@ window.addEventListener("DOMContentLoaded", () => {
   // Ereignisbindung für Sprachumschaltung erneut setzen
   select.addEventListener("change", () => applyLanguage(select.value));
 });
+// === API-Verbindung testen ===
+function testApi() {
+  fetch(`${API_BASE}/api/persons`)
+    .then(res => res.ok ? res.json() : Promise.reject("Fehler beim Abrufen"))
+    .then(data => {
+      document.getElementById("apiStatus").textContent = `✅ Verbindung erfolgreich. Es gibt ${data.length} Profile.`;
+    })
+    .catch(err => {
+      console.error("API-Test fehlgeschlagen:", err);
+      document.getElementById("apiStatus").textContent = "❌ Verbindung zum Backend fehlgeschlagen.";
+    });
+}

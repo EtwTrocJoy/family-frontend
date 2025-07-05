@@ -78,6 +78,12 @@
   </section>
 
   <script src="js/app.js"></script>
+  <!-- === API-TEST (manuell eingebaut) === -->
+<section id="apiTest" style="margin-top: 20px;">
+  <h3>🧪 Verbindung zum Backend testen</h3>
+  <button onclick="testApi()">Jetzt testen</button>
+  <p id="apiStatus">Noch nicht getestet</p>
+</section>
 </body>
 </html>
 <!-- === GRUPPENAUSWAHL & BEITRITT === -->
